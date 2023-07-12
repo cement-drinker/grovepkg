@@ -6,7 +6,7 @@
 
 int setup(char maindir[], char worldfile[], char sources[])
 {
-    char pkgrootdir[100];                    strcat(strcpy(pkgrootdir, maindir), "/pkg");
+    char pkgrootdir[100];                strcat(strcpy(pkgrootdir, maindir), "/pkg");
     char  worldfile[100];   strcat(strcpy(worldfile, pkgrootdir), "/data/worldfile");
     char sourcefile[100]; strcat(strcpy(sourcefile, pkgrootdir), "/data/sourcefile");
    
