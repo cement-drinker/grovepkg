@@ -1,71 +1,29 @@
-#include    <stdio.h>
-#include   <stdlib.h>
-#include   <string.h>
-#include   <unistd.h>
-#include <sys/stat.h>
+#include <stdio.h>
+#include <curl/curl.h>
+#include <string.h>
 
-int setup(char maindir[], char worldfile[], char sources[])
-{
-    char pkgrootdir[100];                strcat(strcpy(pkgrootdir, maindir), "/pkg");
-    char  worldfile[100];   strcat(strcpy(worldfile, pkgrootdir), "/data/worldfile");
-    char sourcefile[100]; strcat(strcpy(sourcefile, pkgrootdir), "/data/sourcefile");
-   
-    char workdir[100]; strcat(strcpy(workdir, maindir), "/work/");
-    char datadir[100]; strcat(strcpy(datadir, maindir), "/data/");
-    char  srcdir[100]; strcat(strcpy(srcdir, maindir),  "/src/");
-    int newitemsmade = 0;
+size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t written = fwrite(ptr, size, nmemb, stream);
+    return written;
+}
 
-    if ( access(maindir, F_OK) )
-    {
-        mkdir(maindir, 0744);
-        newitemsmade++;
-
-        mkdir(workdir, 0744);
-        newitemsmade++;
-
-        mkdir(datadir, 0744);
-        newitemsmade++;
-
-        mkdir(srcdir, 0744);
-        newitemsmade++;
-    } else if ( !access(maindir, F_OK) && access(workdir, F_OK) &&access(datadir, F_OK) && access(srcdir, F_OK) )
-    {
-        mkdir(workdir, 0744);
-        newitemsmade++;
-
-        mkdir(datadir, 0744);
-        newitemsmade++;
-
-        mkdir(srcdir, 0744);
-        newitemsmade++;
+int addpkg(char pkg[], char prefix[], char[] source) {
+    CURL *curl;
+    FILE *fp;
+    CURLcode res;
+    char *url; strcat(strcpy(url, source), pkg);
+    char outfilename[FILENAME_MAX]; strcat(strcpy(outfilename, prefix), "/usr/share/grove/work/");
+    outfilename; strcpy(outfilename,pkg)
+    curl = curl_easy_init();
+    if (curl) {
+        fp = fopen(outfilename,"wb");
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+        res = curl_easy_perform(curl);
+        /* always cleanup */
+        curl_easy_cleanup(curl);
+        fclose(fp);
     }
-
-    if  ( access(worldfile, F_OK) )
-    {
-        fopen(worldfile, "w");
-        newitemsmade++;
-    }
-
-
-    if  ( access(sources, F_OK) )
-    {
-        fopen(sources, "w");
-        newitemsmade++;
-    }
-
-    printf("%s", workdir);
-
-    }
-
-
-    void usage(char tool[])
-    {
-        if(strcmp(tool, "setup"))
-        {
-            printf("GROVE-SETUP PKG TOOL\n");
-            printf("usage: grove-setup [OPTIONS]\n");
-            printf("[OPTIONS] can be any of '-v (verbose) -V (version) -M (maindir)\n");
-        }
-        printf("-------------\n");
-        printf("version 0.1\n");
-    }
+    return 0;
+}
