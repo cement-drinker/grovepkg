@@ -2,23 +2,34 @@
 #include <curl/curl.h>
 #include <string.h>
 
-size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
-    size_t written = fwrite(ptr, size, nmemb, stream);
-    return written;
-}
+/* CREDIT HERE 
 
-int addpkg(char pkg[], char prefix[], char[] source) {
+the download part of addpkg is from this stackoverflow post:
+https://stackoverflow.com/a/1636415
+
+everything else by me.
+
+*/
+
+int addpkg(char pkg[], char prefix[], char source[]) {
+    /* Unset Variables (passed to curl-easy-setopt) */
     CURL *curl;
     FILE *fp;
     CURLcode res;
-    char *url; strcat(strcpy(url, source), pkg);
-    char outfilename[FILENAME_MAX]; strcat(strcpy(outfilename, prefix), "/usr/share/grove/work/");
-    outfilename; strcpy(outfilename,pkg)
+
+    /* Argument-Variables (the variable is equal to some operation done on the arguments given to addpkg) */
+    char     url[FILENAME_MAX];                          strcat(strcpy(url, source), pkg);
+    char pkgdest[FILENAME_MAX]; strcat(strcpy(pkgdest, prefix), "/usr/share/grove/work/");
+    
+    /* Late variable declarations and additions */
+    pkgdest; strcat(pkgdest,pkg);
     curl = curl_easy_init();
+
+    /* Run Curl*/
     if (curl) {
-        fp = fopen(outfilename,"wb");
+        fp = fopen(pkgdest,"wb");
         curl_easy_setopt(curl, CURLOPT_URL, url);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
         res = curl_easy_perform(curl);
         /* always cleanup */
