@@ -10,7 +10,14 @@ https://stackoverflow.com/a/1636415
 everything else by me.
 
 */
-
+int usage(char tool[], char args[], char options[], char version[])
+{
+    printf("GROVE PACKAGE MANAGER: %s\n", tool);
+    printf("usage: %s %s\n", tool, args);
+    printf("where [OPTIONS] can be either of %s\n", options);
+    printf("--------------\n");
+    printf("version: %s\n", version);
+}
 int addpkg(char pkg[], char prefix[], char source[]) {
     /* Unset Variables (passed to curl-easy-setopt) */
     CURL *curl;
