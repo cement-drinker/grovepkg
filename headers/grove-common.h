@@ -18,23 +18,31 @@ int usage(char tool[], char args[], char options[], char version[])
     printf("--------------\n");
     printf("version: %s\n", version);
 }
-int addpkg(char pkg[], char prefix[], char source[]) {
+int addpkg(char pkg[], char prefix[], char source[], char comprfmt[]) {
     /* Unset Variables (passed to curl-easy-setopt) */
     CURL *curl;
     FILE *fp;
     CURLcode res;
 
     /* Argument-Variables (the variable is equal to some operation done on the arguments given to addpkg) */
-    char     url[FILENAME_MAX];                          strcat(strcpy(url, source), pkg);
-    char pkgdest[FILENAME_MAX]; strcat(strcpy(pkgdest, prefix), "/usr/share/grove/work/");
+    char      tarfmt[FILENAME_MAX]; strcat(strcpy(tarfmt, ".tar."), comprfmt);
+    char  prefdirpkg[FILENAME_MAX]; strcat(strcpy(prefdirpkg, prefix), "/usr/share/grove/work/"); 
+    char     pkgfile[FILENAME_MAX]; strcat(strcpy(pkgfile, prefdirpkg), pkg);
+
+    char    pkgwtfmt[FILENAME_MAX]; strcat(strcpy(pkgwtfmt, pkgfile), tarfmt);
+    char         url[FILENAME_MAX]; strcat(strcpy(url, source), pkg); strcat(url, tarfmt);
+    char         cmd[FILENAME_MAX]; strcat (strcpy(cmd, "tar -xvf "), pkgwtfmt);
+                                    strcat(cmd, " -C ");
+                                    strcat(cmd, prefdirpkg);
+ 
     
     /* Late variable declarations and additions */
-    pkgdest; strcat(pkgdest,pkg);
+    
     curl = curl_easy_init();
 
     /* Run Curl*/
     if (curl) {
-        fp = fopen(pkgdest,"wb");
+        fp = fopen(pkgwtfmt,"wb");
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
@@ -43,5 +51,7 @@ int addpkg(char pkg[], char prefix[], char source[]) {
         curl_easy_cleanup(curl);
         fclose(fp);
     }
+    system(cmd);
     return 0;
+    
 }
